@@ -6,7 +6,7 @@
 /*   By: alelievr <alelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/13 19:59:29 by alelievr          #+#    #+#             */
-/*   Updated: 2015/12/07 19:25:15 by alelievr         ###   ########.fr       */
+/*   Updated: 2015/12/14 13:10:52 by alelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,63 @@
 
 int		fd_pipe[2];
 int		_stdout;
+
+int		isnumber(int c) {
+	return (c >= '0' && c <= '9');
+}
+
+	char *
+strnstr(s, find, slen)
+	const char *s;
+	const char *find;
+	size_t slen;
+{
+	char c, sc;
+	size_t len;
+
+	if ((c = *find++) != '\0') {
+		len = strlen(find);
+		do {
+			do {
+				if ((sc = *s++) == '\0' || slen-- < 1)
+					return (NULL);
+			} while (sc != c);
+			if (len > slen)
+				return (NULL);
+		} while (strncmp(s, find, len) != 0);
+		s--;
+	}
+	return ((char *)s);
+}
+
+size_t strlcat(dst, src, siz)
+	char *dst;
+	const char *src;
+	size_t siz;
+{
+	register char *d = dst;
+	register const char *s = src;
+	register size_t n = siz;
+	size_t dlen;
+
+	while (*d != '\0' && n-- != 0)
+		d++;
+	dlen = d - dst;
+	n = siz - dlen;
+
+	if (n == 0)
+		return(dlen + strlen(s));
+	while (*s != '\0') {
+		if (n != 1) {
+			*d++ = *s;
+			n--;
+		}
+		s++;
+	}
+	*d = '\0';
+
+	return(dlen + (s - src));
+}
 
 void	fd_to_buffer(int fd) {
 	_stdout = dup(fd);

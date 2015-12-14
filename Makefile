@@ -6,7 +6,7 @@
 #    By: alelievr <alelievr@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/04/04 19:22:36 by alelievr          #+#    #+#              #
-#    Updated: 2015/11/26 20:47:52 by alelievr         ###   ########.fr        #
+#    Updated: 2015/12/14 13:08:47 by alelievr         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,6 +53,7 @@ CFLAGS		=	-Werror -Wall -Wextra -g
 CSOFLAGS	=	-shared -fPIC
 CSOFLAGS2	=	
 CC			=	clang
+DYNAMFLAG	=	-dynamiclib
 
 #	Optimization
 OPTFLAGS	=	-funroll-loops -O3 -pipe
@@ -83,6 +84,15 @@ SHELL		=	/bin/zsh
 OBJ			=	$(addprefix $(OBJDIR)/, $(addsuffix .o, $(basename $(SRC))))
 INCFLAG		=	$(addprefix -I,$(INCDIR))
 NORME		=	$(addsuffix /*.h,$(INCDIR)) $(addprefix $(SRCDIR)/,$(SRC))
+
+#################
+##    LINUX    ##
+#################
+OS			:=	$(shell uname)
+ifeq ($(OS), Linux)
+	LINUXLIBS = -ldl -lpthread
+	DYNAMFLAG = -shared -fPIC
+endif
 
 $(foreach L, $(LIBS), \
 	$(eval VLIB += -l$(L)) \
@@ -126,7 +136,7 @@ $(WRAPNAME):
 	@$(call exec_color, "\033[38;5;$(LINK_COLOR_T)m", $(CC) $(ASSETDIR)/wrapper.c -I $(INCDIR) -o $(WRAPNAME))
 
 $(ASSETDIR)/$(LIBMALLOC):
-	@$(call exec_color, "\033[38;5;$(LINK_COLOR_T)m", $(CC) -dynamiclib $(ASSETDIR)/malloc.c -I $(INCDIR) -o $(ASSETDIR)/$(LIBMALLOC))
+	@$(call exec_color, "\033[38;5;$(LINK_COLOR_T)m", $(CC) $(DYNAMFLAG) $(ASSETDIR)/malloc.c -I $(INCDIR) -o $(ASSETDIR)/$(LIBMALLOC))
 
 $(ASSETDIR)/$(ANAME):
 	@$(call exec_color, "\033[38;5;$(LINK_COLOR_T)m", make -C $(LIBFTDIR))
@@ -142,7 +152,7 @@ shared:
 $(ASSETDIR)/$(NAME): $(OBJ)
 	@$(call disp_title,Linking,$(LINK_COLOR_T));
 	@$(call exec_color, "\033[38;5;$(LINK_COLOR_T)m➤ \033[38;5;$(LINK_COLOR)m",\
-		$(CC), $(CFLAGS), $(OPTFLAGS), $(VLIBDIR), $(VLIB), $(RFRAME), -o, $(ASSETDIR)/$(NAME), $(OBJ))
+		$(CC), $(CFLAGS), $(OPTFLAGS), $(VLIBDIR), $(VLIB), $(RFRAME), -o, $(ASSETDIR)/$(NAME), $(OBJ) $(LINUXLIBS))
 
 #	Objects compilation
 $(OBJDIR)/%.o: $(SRCDIR)/%.c

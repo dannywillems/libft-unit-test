@@ -6,7 +6,7 @@
 /*   By: alelievr <alelievr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/11/13 20:23:36 by alelievr          #+#    #+#             */
-/*   Updated: 2015/12/08 17:34:40 by alelievr         ###   ########.fr       */
+/*   Updated: 2015/12/14 13:06:40 by alelievr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,11 @@
 # include <stdint.h>
 # include <limits.h>
 # include <time.h>
+
+# ifdef __linux__
+#  include <sys/wait.h>
+#  define RTLD_NEXT ((void *)-1)
+# endif
 
 typedef struct	s_subtest {
 	char	*fun_name;
@@ -247,6 +252,9 @@ void			ft_raise(int s);
 void			fd_to_buffer(int fd);
 char			*get_fd_buffer(int fd, char *buff, size_t size);
 int				get_last_malloc_size(void);
+char			*strnstr(char const *s1, char const *s2, size_t n);
+size_t			strlcat(char *dst, char const *src, size_t size);
+int				isnumber(int c);
 
 /*  sanbox:  */
 void			sandbox(void);
